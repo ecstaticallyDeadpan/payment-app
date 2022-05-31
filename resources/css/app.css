@@ -1,0 +1,10 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.wpwl-wrapper.wpwl-wrapper-submit button.wpwl-button.wpwl-button-pay {
+    @apply bg-indigo-600 border-transparent shadow-sm text-sm font-medium rounded-md;
+}
+.wpwl-wrapper.wpwl-wrapper-submit button.wpwl-button.wpwl-button-pay:hover{
+    @apply bg-indigo-700;
+}
