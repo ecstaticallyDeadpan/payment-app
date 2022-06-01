@@ -7,7 +7,11 @@ use App\Models\Transaction;
 
 class TotalProcessing extends Controller
 {
-    public function generateCheckout(Request $request){
+    /*
+    * Takes amount value from user form and returns checkout id
+    */
+    public function generateCheckout(Request $request)
+    {
         $url = "https://eu-test.oppwa.com/v1/checkouts";
         $data = "entityId=" . env('TP_ENTITY_ID') .
             "&amount=" . $request->input('amount') .
@@ -42,7 +46,11 @@ class TotalProcessing extends Controller
 
         return $responseData;
     }
-    public function checkStatus(Request $request){
+    /*
+    *  Sends request to TP to get status of payment
+    */
+    public function checkStatus(Request $request)
+    {
         $id = $request->input('checkout_id');
         $url = "https://eu-test.oppwa.com/v1/checkouts/";
         $url .= $id . "/payment";
