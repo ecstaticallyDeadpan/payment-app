@@ -1,47 +1,46 @@
-<script>
+<script setup>
     import Notification from '@/Components/Notification.vue'
-    export default{
-        data(){
-            return {
-                statusResponse: false,
-                paymentStatus: 'pending'
+    import {onMounted, ref} from 'Vue'
+
+    const statusResponse = ref(false)
+    const paymentStatus = ref('pending')
+
+    onMounted(() => {
+        checkStatus();
+    })
+
+    const checkStatus = async () => {
+        // Get id from url string
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        // Build url for processing
+        let url = '/processing/check-status?' + new URLSearchParams({
+            checkout_id: urlParams.get('id'),
+        })
+        // Query the api for status
+        try{
+            let returnedValue = await fetch(url)
+            if (returnedValue.ok){
+                // If status is returned then set values and run updateStatus
+                let data = await returnedValue.json()
+                statusResponse.value = data;
+                updateStatus();
             }
-        },
-        mounted(){
-            this.checkStatus();
-        },
-        methods: {
-            checkStatus(){
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-                return fetch('/processing/check-status?' + new URLSearchParams({
-                        checkout_id: urlParams.get('id'),
-                    }), {
-                    method: 'get',
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                }).then(response => response.json())
-                .then( data => {
-                    // Success
-                    this.statusResponse = data;
-                    this.updateStatus();
-                });
-            },
-            updateStatus(){
-                if(this.statusResponse && this.statusResponse.result.code == '000.100.110' ){
-                    this.paymentStatus = 'successful';
-                }else if( this.statusResponse
-                    && ( this.statusResponse.result.code == "200.300.404"
-                    || this.statusResponse.result.code == "200.300.404" ) ){
-                    this.paymentStatus = 'error';
-                }else{
-                    this.paymentStatus = 'pending';
-                }
-            }
-        },
-        components: {
-            Notification
+        }catch(error){
+            // If fails then set status to error
+            paymentStatus.value = "error"
+        }
+    }
+    const updateStatus = () =>{
+        // Catch various status codes from the api
+        if(statusResponse.value && statusResponse.value.result.code == '000.100.110' ){
+            paymentStatus.value = 'successful';
+        }else if( statusResponse.value
+            && ( statusResponse.value.result.code == "200.300.404"
+            || statusResponse.value.result.code == "200.300.404" ) ){
+            paymentStatus.value = 'error';
+        }else{
+            paymentStatus.value = 'pending';
         }
     }
 </script>
