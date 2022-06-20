@@ -1,59 +1,49 @@
-<script>
+<script setup>
     import Notification from '@/Components/Notification.vue';
+    import {ref} from 'Vue';
 
-    export default{
-        data(){
-            return{
-                stage: 'amount',
-                amount: null,
-                reference: null,
-                checkoutResponse: false,
-                error: false,
-            }
-        },
-        methods: {
-            submitForm(){
-                // Quick validation
-                if(!this.amount || !this.reference){
-                    this.error = "Please make sure amount and reference are filled in";
-                    return false;
-                }else{
-                    this.error = false;
-                }
-                // Fetch checkout
-                return fetch('/processing/generate-checkout?' + new URLSearchParams({
-                        amount: this.amount.toFixed(2),
-                        reference: this.reference,
-                    }), {
-                    method: 'get',
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                }).then(response => response.json())
-                .then( data => {
-                    // Success
-                    this.checkoutResponse = data;
-                    this.addScript(this.checkoutResponse.id);
-                    this.stage = 'checkout';
-                });
-            },
-            addScript(id){
-                let doc = document.createElement('script');
-                doc.setAttribute('src',"https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=" + id);
-                document.head.appendChild(doc);
-            },
-            validateForm(){
-                return ;
-            }
-        },
-        components: {
-            Notification
+    const stage = ref('amount')
+    const amount = ref(null)
+    const reference = ref(null)
+    const checkoutResponse = ref(false)
+    const error = ref(false)
+
+    const submitForm = () => {
+        // Quick validation
+        if (!amount.value || !reference.value) {
+            error.value = "Please make sure amount and reference are filled in";
+            return false;
+        } else {
+            error.value = false;
         }
+        // Fetch checkout
+        return fetch('/processing/generate-checkout?' + new URLSearchParams({
+            amount: amount.value.toFixed(2),
+            reference: reference.value,
+        }), {
+            method: 'get',
+            headers: {
+                'content-type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(data => {
+                // Success
+                checkoutResponse.value = data;
+                addScript(checkoutResponse.value.id);
+                stage.value = 'checkout';
+            });
     }
-    // Custom styling for checkout widget
-    window.wpwlOptions = {
-        style:'plain',
+    const addScript = (id) => {
+        let doc = document.createElement('script');
+        doc.setAttribute('src', "https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=" + id);
+        document.head.appendChild(doc);
     }
+</script>
+<script>
+// Custom styling for checkout widget
+window.wpwlOptions = {
+    style: 'plain',
+}
 </script>
 
 <template>
