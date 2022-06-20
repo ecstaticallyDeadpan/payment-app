@@ -1,19 +1,10 @@
-<script>
+<script setup>
+    import { ref, onMounted } from 'vue'
     import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
     import { Head } from '@inertiajs/inertia-vue3';
-
-    export default{
-        props: {
-            transactions: Object,
-        },
-        mounted(){
-            console.log(this.transactions);
-        },
-        components: {
-            Head,
-            BreezeAuthenticatedLayout
-        }
-    }
+    defineProps({
+        transactions: Object,
+    });
 </script>
 
 <template>

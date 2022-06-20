@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 
-class TotalProcessing extends Controller
+class TotalProcessingController extends Controller
 {
     /*
     * Takes amount value from user form and returns checkout id
@@ -13,7 +13,7 @@ class TotalProcessing extends Controller
     public function generateCheckout(Request $request)
     {
         $url = "https://eu-test.oppwa.com/v1/checkouts";
-        $data = "entityId=" . env('TP_ENTITY_ID') .
+        $data = "entityId=" . config('paymentGateway.tp_entity_id') .
             "&amount=" . $request->input('amount') .
             "&currency=GBP" .
             "&paymentType=DB";
@@ -21,7 +21,7 @@ class TotalProcessing extends Controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization:Bearer ' . env('TP_ACCESS_TOKEN')
+            'Authorization:Bearer ' . config('paymentGateway.tp_access_token')
         ));
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -54,12 +54,12 @@ class TotalProcessing extends Controller
         $id = $request->input('checkout_id');
         $url = "https://eu-test.oppwa.com/v1/checkouts/";
         $url .= $id . "/payment";
-        $url .= "?entityId=" . env('TP_ENTITY_ID');
+        $url .= "?entityId=" . config('paymentGateway.tp_entity_id');
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization:Bearer ' . env('TP_ACCESS_TOKEN')
+            'Authorization:Bearer ' . config('paymentGateway.tp_access_token')
         ));
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be set to true in production

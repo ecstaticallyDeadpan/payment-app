@@ -22,7 +22,7 @@ mix.js('resources/js/app.js', 'public/js')
         '@': 'resources/js',
     });
 
-    mix.browserSync('payment-integration.lo');
+    mix.browserSync('payment-app.lo');
 
 if (mix.inProduction()) {
     mix.version();
