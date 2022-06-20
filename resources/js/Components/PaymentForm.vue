@@ -17,33 +17,37 @@
             error.value = false;
         }
         // Fetch checkout
-        return fetch('/processing/generate-checkout?' + new URLSearchParams({
+        getCheckout();
+    }
+    const getCheckout = async () =>{
+        // Create url from form values
+        let url = '/processing/generate-checkout?' + new URLSearchParams({
             amount: amount.value.toFixed(2),
             reference: reference.value,
-        }), {
-            method: 'get',
-            headers: {
-                'content-type': 'application/json'
-            }
-        }).then(response => response.json())
-            .then(data => {
-                // Success
-                checkoutResponse.value = data;
+        });
+        try{
+            let returnedValue = await fetch(url);
+            if (returnedValue.ok) {
+                checkoutResponse.value = await returnedValue.json();
                 addScript(checkoutResponse.value.id);
                 stage.value = 'checkout';
-            });
+            }
+        }catch(error){
+            error.value = "There has been an error connecting"
+        }
     }
     const addScript = (id) => {
         let doc = document.createElement('script');
         doc.setAttribute('src', "https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=" + id);
         document.head.appendChild(doc);
     }
+    // Custom styling for checkout widget
+    window.wpwlOptions = {
+        style: 'plain',
+    }
 </script>
 <script>
-// Custom styling for checkout widget
-window.wpwlOptions = {
-    style: 'plain',
-}
+
 </script>
 
 <template>
