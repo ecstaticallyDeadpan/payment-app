@@ -19,7 +19,7 @@
         // Fetch checkout
         getCheckout();
     }
-    const getCheckout = async () =>{
+    const getCheckout = async () => {
         // Create url from form values
         let url = '/processing/generate-checkout?' + new URLSearchParams({
             amount: amount.value.toFixed(2),
@@ -45,9 +45,6 @@
     window.wpwlOptions = {
         style: 'plain',
     }
-</script>
-<script>
-
 </script>
 
 <template>
